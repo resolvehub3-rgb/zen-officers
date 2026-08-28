@@ -1,7 +1,6 @@
 export type UserRole = 
   | 'SECURITY_OFFICER' 
   | 'STATION_MANAGER' 
-  | 'STATION_SUPERVISOR' 
   | 'HEAD_OFFICE';
 
 export type DutyStatus = 'SCHEDULED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
@@ -248,7 +247,7 @@ export interface ReportSignature {
   signedBy: string;
   signerName: string;
   signerEmployeeId: string;
-  role: 'STATION_MANAGER' | 'STATION_SUPERVISOR' | 'HEAD_OFFICE';
+  role: 'STATION_MANAGER' | 'HEAD_OFFICE';
   signatureData: string; // base64 canvas signature or digital seal
   signedAt: string;
   ipAddress?: string;
