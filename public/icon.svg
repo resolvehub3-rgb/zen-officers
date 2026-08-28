@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#0f172a" />
+  <!-- Shield outline and glow -->
+  <path d="M256 64 L416 128 V272 C416 368 256 448 256 448 C256 448 96 368 96 272 V128 Z" fill="url(#shieldGrad)" />
+  <path d="M256 96 L384 148 V264 C384 340 256 412 256 412 C256 412 128 340 128 264 V148 Z" fill="#1e293b" />
+  <!-- Inner security emblem / check / star -->
+  <path d="M224 280 L184 240 L160 264 L224 328 L352 200 L328 176 Z" fill="#38bdf8" />
+</svg>

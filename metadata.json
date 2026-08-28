@@ -1,0 +1,6 @@
+{
+  "name": "Zen Security Operations SaaS",
+  "description": "Enterprise Security Occurrence, Duty Reporting, Patrol Monitoring and Incident Management SaaS",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
