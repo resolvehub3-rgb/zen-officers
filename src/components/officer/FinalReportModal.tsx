@@ -9,7 +9,6 @@ import {
   AlertTriangle, 
   ShieldAlert, 
   Footprints, 
-  ClipboardCheck, 
   UserCheck, 
   X, 
   AlertCircle,
@@ -41,11 +40,10 @@ export const FinalReportModal: React.FC<{
           setTimeline(res);
           // Set intelligent default summary based on duty records
           const patrolsCount = res.patrolReports?.length || 0;
-          const checksCount = res.routineChecks?.length || 0;
           const occurrencesCount = res.occurrences?.length || 0;
 
           setSummary(
-            `Completed regular security shift at ${activeDuty.stationName}. Conducted ${patrolsCount} perimeter patrol rounds and ${checksCount} routine station inspections. Handled ${occurrencesCount} occurrence logs.`
+            `Completed night security shift at ${activeDuty.stationName}. Conducted ${patrolsCount} patrol sweeps across fuel forecourt, underground tanks, and perimeter. Handled ${occurrencesCount} occurrence logs.`
           );
         })
         .catch((e) => console.error(e))
@@ -130,27 +128,19 @@ export const FinalReportModal: React.FC<{
               <span className="font-bold text-white">{activeDuty?.stationName}</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center pt-1">
+            <div className="grid grid-cols-2 gap-3 text-center pt-1">
               <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
                 <div className="flex items-center justify-center gap-1 text-[11px] text-slate-400 mb-1">
                   <Footprints className="w-3.5 h-3.5 text-purple-400" />
-                  <span>Patrols</span>
+                  <span>Patrol Sweeps</span>
                 </div>
                 <p className="text-lg font-bold text-white">{timeline?.patrolReports?.length || 0}</p>
               </div>
 
               <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
                 <div className="flex items-center justify-center gap-1 text-[11px] text-slate-400 mb-1">
-                  <ClipboardCheck className="w-3.5 h-3.5 text-teal-400" />
-                  <span>Inspections</span>
-                </div>
-                <p className="text-lg font-bold text-white">{timeline?.routineChecks?.length || 0}</p>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                <div className="flex items-center justify-center gap-1 text-[11px] text-slate-400 mb-1">
-                  <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
-                  <span>Occurrences</span>
+                  <ShieldAlert className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Night Occurrences</span>
                 </div>
                 <p className="text-lg font-bold text-white">{timeline?.occurrences?.length || 0}</p>
               </div>
@@ -215,32 +205,18 @@ export const FinalReportModal: React.FC<{
             />
           </div>
 
-          {/* Outstanding issues & Handover Officer */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Outstanding Issues (If Any)
-              </label>
-              <input
-                type="text"
-                value={outstandingIssues}
-                onChange={(e) => setOutstandingIssues(e.target.value)}
-                placeholder="e.g. Visitor badge 04 unreturned, Gate 2 lamp faulty..."
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Relieving / Handover Officer Name
-              </label>
-              <input
-                type="text"
-                value={handoverOfficerName}
-                onChange={(e) => setHandoverOfficerName(e.target.value)}
-                placeholder="e.g. Officer Kwame Appiah (ID: SO-0089)"
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs focus:border-blue-500 focus:outline-none"
-              />
-            </div>
+          {/* Outstanding issues / Fuel station notes */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              Outstanding Issues / Fuel Station Notes (If Any)
+            </label>
+            <input
+              type="text"
+              value={outstandingIssues}
+              onChange={(e) => setOutstandingIssues(e.target.value)}
+              placeholder="e.g. Dispenser 3 nozzle locked, forecourt floodlight 2 flickering..."
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs focus:border-blue-500 focus:outline-none"
+            />
           </div>
 
           {/* Submitting Notice */}

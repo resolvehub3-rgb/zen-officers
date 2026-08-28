@@ -102,7 +102,7 @@ export const StartDutyModal: React.FC<{
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold text-slate-300">
-                  Arrival Status & Handover Observations
+                  Arrival Status Notes
                 </label>
                 <button
                   type="button"
@@ -117,7 +117,7 @@ export const StartDutyModal: React.FC<{
                 rows={3}
                 value={arrivalNotes}
                 onChange={(e) => setArrivalNotes(e.target.value)}
-                placeholder="E.g., Arrived at station on time. Took over post from previous shift. Security equipment in order..."
+                placeholder="E.g., Arrived at fuel station on time. Main forecourt, pump dispensers, and perimeter secure..."
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs placeholder:text-slate-600 resize-none font-normal"
               />
             </div>

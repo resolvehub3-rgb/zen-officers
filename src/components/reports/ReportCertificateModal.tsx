@@ -127,17 +127,13 @@ export const ReportCertificateModal: React.FC<{
             </div>
 
             {/* Shift Operations Statistics */}
-            <div className="grid grid-cols-3 gap-3 text-center text-xs">
+            <div className="grid grid-cols-2 gap-4 text-center text-xs">
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] font-bold uppercase text-slate-500">Patrols Completed</span>
+                <span className="text-[10px] font-bold uppercase text-slate-500">Patrol Sweeps Completed</span>
                 <p className="text-xl font-bold text-slate-900 mt-0.5">{report.patrolsCount || 0}</p>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] font-bold uppercase text-slate-500">Routine Checks</span>
-                <p className="text-xl font-bold text-slate-900 mt-0.5">{report.routineChecksCount || 0}</p>
-              </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] font-bold uppercase text-slate-500">Occurrences Logged</span>
+                <span className="text-[10px] font-bold uppercase text-slate-500">Night Occurrences Logged</span>
                 <p className="text-xl font-bold text-slate-900 mt-0.5">{report.occurrencesCount || 0}</p>
               </div>
             </div>

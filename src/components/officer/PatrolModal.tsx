@@ -9,8 +9,8 @@ import {
   Check, 
   X, 
   AlertCircle,
-  Clock,
-  Send
+  Sparkles,
+  Fuel
 } from 'lucide-react';
 import { VoiceRecorderModal } from './VoiceRecorderModal.tsx';
 
@@ -32,15 +32,29 @@ export const PatrolModal: React.FC<{
 
   if (!isOpen) return null;
 
-  const quickCheckpoints = [
-    'Main Gate & Barrier',
-    'Perimeter Fence North',
-    'Perimeter Fence South',
-    'Warehouse Bay 1 & 2',
-    'Server Room & Access Terminal',
-    'Emergency Exits & Fire Stairs',
-    'Parking Structure Level 1',
+  const fuelStationCheckpoints = [
+    'Forecourt & Dispenser Pumps',
+    'Underground Fuel Storage Tanks',
+    'Cashier Booth & Mini-Mart',
+    'Tanker Discharge Bay',
+    'Rear Perimeter Fence & Wall',
+    'Air / Water Service Island',
+    'Generator & Electrical Bay',
+    'Vehicle Ingress & Egress Lanes',
   ];
+
+  const quickObservationSnippets = [
+    'All pump dispenser nozzle locks secure & in place.',
+    'Underground tank dip caps locked; no fuel leaks detected.',
+    'Forecourt canopy lights and boundary floodlights fully lit.',
+    'Cashier booth & mart entrance locked; area quiet.',
+    'Perimeter wall intact with no unauthorized persons or loitering.',
+    'Emergency shut-off switch and fire extinguishers clear & accessible.',
+  ];
+
+  const handleSnippetClick = (snippet: string) => {
+    setDescription((prev) => (prev ? `${prev} ${snippet}` : snippet));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +75,7 @@ export const PatrolModal: React.FC<{
         patrolSessionId: 'patrol-' + Date.now(),
         dutySessionId: activeDuty.id,
         stationId: activeDuty.stationId || user?.stationId,
-        locationTag: locationTag || 'General Perimeter Patrol',
+        locationTag: locationTag || 'Fuel Station Forecourt & Perimeter Patrol',
         description,
         photoUrl: photoUrl || undefined,
         voiceNoteUrl: voiceAudioUrl,
@@ -84,16 +98,16 @@ export const PatrolModal: React.FC<{
   return (
     <>
       <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-slate-100">
+        <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-slate-100 max-h-[92vh] flex flex-col">
           {/* Header */}
-          <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div className="p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
                 <Footprints className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-white">Log Patrol Observation</h3>
-                <p className="text-xs text-slate-400">Record sector checkpoint status and perimeter checks</p>
+                <h3 className="font-bold text-base text-white">Log Fuel Station Patrol Sweep</h3>
+                <p className="text-xs text-slate-400">Record rounds across dispenser pumps, underground tanks & perimeter</p>
               </div>
             </div>
             <button
@@ -105,7 +119,7 @@ export const PatrolModal: React.FC<{
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
             {error && (
               <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -113,20 +127,20 @@ export const PatrolModal: React.FC<{
               </div>
             )}
 
-            {/* Checkpoint suggestions */}
+            {/* Checkpoint sector suggestions */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Select Checkpoint / Sector Tag
+                Fuel Station Checkpoint Sector
               </label>
               <div className="flex flex-wrap gap-1.5 mb-2">
-                {quickCheckpoints.map((cp) => (
+                {fuelStationCheckpoints.map((cp) => (
                   <button
                     key={cp}
                     type="button"
                     onClick={() => setLocationTag(cp)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
                       locationTag === cp
-                        ? 'bg-purple-600/30 border-purple-500 text-white'
+                        ? 'bg-purple-600/30 border-purple-500 text-white shadow-sm'
                         : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
                     }`}
                   >
@@ -140,9 +154,28 @@ export const PatrolModal: React.FC<{
                   type="text"
                   value={locationTag}
                   onChange={(e) => setLocationTag(e.target.value)}
-                  placeholder="Or enter custom patrol checkpoint location..."
+                  placeholder="Or enter custom fuel station location..."
                   className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 focus:border-purple-500 focus:outline-none text-slate-100 text-xs"
                 />
+              </div>
+            </div>
+
+            {/* Quick Observation Snippets */}
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                Quick Observation Templates (Click to add)
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {quickObservationSnippets.map((snippet, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSnippetClick(snippet)}
+                    className="px-2 py-1 rounded-lg text-[10px] text-slate-300 bg-slate-950 hover:bg-purple-950/30 border border-slate-800 hover:border-purple-500/40 transition-colors text-left"
+                  >
+                    + {snippet}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -166,43 +199,50 @@ export const PatrolModal: React.FC<{
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="State checkpoint condition: e.g. Checked North perimeter fence, locks secure, emergency lights operational, zero breaches..."
+                placeholder="Detail the status of fuel pumps, tank locks, forecourt lighting, vehicle traffic, or perimeter condition..."
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-purple-500 focus:outline-none text-slate-100 text-xs placeholder:text-slate-600 resize-none font-normal"
               />
             </div>
 
             {voiceTranscription && (
               <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-500/30 text-xs text-purple-300">
-                <p className="font-semibold text-[11px] text-purple-400 uppercase tracking-wider mb-0.5">
-                  🎙️ Transcribed Audio:
+                <p className="font-semibold text-[11px] text-purple-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  🎙️ Transcribed Voice Note:
                 </p>
                 <p className="italic">"{voiceTranscription}"</p>
               </div>
             )}
 
-            {/* Photos */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleSamplePhotoUpload}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
-              >
-                <Camera className="w-4 h-4 text-purple-400" />
-                {photoUrl ? 'Photo Attached' : 'Attach Checkpoint Photo'}
-              </button>
-
-              {photoUrl && (
-                <div className="flex items-center gap-2 p-1 pl-2 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                  <img src={photoUrl} alt="Patrol" className="w-7 h-7 rounded-lg object-cover" />
-                  <span className="text-slate-300">Image attached</span>
-                  <button type="button" onClick={() => setPhotoUrl('')} className="p-1 text-slate-400 hover:text-red-400">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
+            {/* Photo upload */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Station Checkpoint Photo (Optional)</label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleSamplePhotoUpload}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
+                >
+                  <Camera className="w-4 h-4 text-purple-400" />
+                  {photoUrl ? 'Change Photo' : 'Attach Checkpoint Photo'}
+                </button>
+                {photoUrl && (
+                  <div className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                    <img src={photoUrl} alt="Patrol photo" className="w-8 h-8 rounded-lg object-cover" />
+                    <span className="text-slate-300">Photo attached</span>
+                    <button
+                      type="button"
+                      onClick={() => setPhotoUrl('')}
+                      className="text-slate-400 hover:text-red-400 p-1"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Footer buttons */}
+            {/* Action buttons */}
             <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
               <button
                 type="button"
@@ -214,10 +254,10 @@ export const PatrolModal: React.FC<{
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg shadow-purple-600/30 transition-all hover:scale-105 active:scale-95"
               >
-                <Send className="w-4 h-4" />
-                {loading ? 'Submitting...' : 'Log Patrol Check'}
+                <Footprints className="w-4 h-4" />
+                <span>{loading ? 'Submitting...' : 'Log Patrol Sweep'}</span>
               </button>
             </div>
           </form>
@@ -227,7 +267,7 @@ export const PatrolModal: React.FC<{
       <VoiceRecorderModal
         isOpen={isVoiceOpen}
         onClose={() => setIsVoiceOpen(false)}
-        title="Voice Dictate Patrol Observation"
+        title="Dictate Fuel Station Patrol Sweep"
         onTranscriptionComplete={(text, audioUrl) => {
           setDescription((prev) => (prev ? `${prev} ${text}` : text));
           setVoiceTranscription(text);

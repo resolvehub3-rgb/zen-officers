@@ -91,12 +91,11 @@ export const ManagerDashboard: React.FC = () => {
 
   const pendingReports = reports.filter((r) => r.status === 'PENDING_REVIEW' || r.status === 'SUBMITTED');
 
-  // Chart data for Reports Summary Donut Chart matching the mockup
+  // Chart data for Reports Summary Donut Chart
   const chartData = [
-    { name: 'Patrol Reports', value: 42, color: '#a855f7' },
-    { name: 'Incident Reports', value: 25, color: '#ef4444' },
-    { name: 'Final Reports', value: 21, color: '#3b82f6' },
-    { name: 'Routine Checks', value: 12, color: '#14b8a6' },
+    { name: 'Patrol Sweeps', value: 48, color: '#a855f7' },
+    { name: 'Occurrences Logged', value: 31, color: '#3b82f6' },
+    { name: 'Verified Final Reports', value: 21, color: '#10b981' },
   ];
 
   const filteredReports = reports.filter((r) => {

@@ -7,7 +7,6 @@ import {
   FileText, 
   Footprints, 
   Mic, 
-  ClipboardList, 
   CheckCircle2, 
   Clock, 
   MapPin, 
@@ -25,7 +24,6 @@ import {
 import { StartDutyModal } from './StartDutyModal.tsx';
 import { OccurrenceModal } from './OccurrenceModal.tsx';
 import { PatrolModal } from './PatrolModal.tsx';
-import { RoutineCheckModal } from './RoutineCheckModal.tsx';
 import { VoiceRecorderModal } from './VoiceRecorderModal.tsx';
 import { FinalReportModal } from './FinalReportModal.tsx';
 import { ReportCertificateModal } from '../reports/ReportCertificateModal.tsx';
@@ -41,7 +39,6 @@ export const OfficerDashboard: React.FC = () => {
   const [isStartDutyOpen, setIsStartDutyOpen] = useState(false);
   const [isOccurrenceOpen, setIsOccurrenceOpen] = useState(false);
   const [isPatrolOpen, setIsPatrolOpen] = useState(false);
-  const [isCheckOpen, setIsCheckOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [isFinalReportOpen, setIsFinalReportOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<any>(null);
@@ -222,13 +219,13 @@ export const OfficerDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Action Touch Cards (4-Grid Matching UI Mockup) */}
+      {/* Quick Action Touch Cards (4-Grid Clean Night Ops) */}
       <div>
         <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3">
           Quick Operational Actions
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-          {/* Action 1: New Occurrence / Incident */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Action 1: Night Occurrence Log */}
           <button
             onClick={() => {
               if (!activeDuty) setIsStartDutyOpen(true);
@@ -241,15 +238,15 @@ export const OfficerDashboard: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
-                New Occurrence
+                Night Occurrence
               </h4>
               <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Report incident, damage, safety or suspicious activity
+                Log vehicle activity, delivery, unusual event, or safety notice
               </p>
             </div>
           </button>
 
-          {/* Action 2: Patrol Check */}
+          {/* Action 2: Patrol Sweep */}
           <button
             onClick={() => {
               if (!activeDuty) setIsStartDutyOpen(true);
@@ -262,10 +259,10 @@ export const OfficerDashboard: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-purple-400 transition-colors">
-                Patrol Report
+                Patrol Sweep
               </h4>
               <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Log perimeter checkpoints & checkpoint observations
+                Log rounds on pumps, underground tanks & perimeter
               </p>
             </div>
           </button>
@@ -286,38 +283,17 @@ export const OfficerDashboard: React.FC = () => {
                 <Sparkles className="w-3 h-3 text-amber-400" />
               </div>
               <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Speak observations with AI speech transcription
+                Dictate station findings with voice transcription
               </p>
             </div>
           </button>
 
-          {/* Action 4: Routine Check Inspection */}
-          <button
-            onClick={() => {
-              if (!activeDuty) setIsStartDutyOpen(true);
-              else setIsCheckOpen(true);
-            }}
-            className="p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-teal-500/40 shadow-lg text-left transition-all group flex flex-col justify-between"
-          >
-            <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-              <ClipboardList className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-teal-400 transition-colors">
-                Routine Check
-              </h4>
-              <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Interactive safety & station post checklist
-              </p>
-            </div>
-          </button>
-
-          {/* Action 5: My Shift Reports & Signatures */}
+          {/* Action 4: My Shift Reports & Signatures */}
           <button
             onClick={() => {
               if (reports.length > 0) setSelectedReport(reports[0]);
             }}
-            className="p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-indigo-500/40 shadow-lg text-left transition-all group flex flex-col justify-between col-span-2 sm:col-span-1"
+            className="p-4 sm:p-5 rounded-2xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-indigo-500/40 shadow-lg text-left transition-all group flex flex-col justify-between"
           >
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
               <FileCheck className="w-5 h-5" />
@@ -327,7 +303,7 @@ export const OfficerDashboard: React.FC = () => {
                 My Reports ({reports.length})
               </h4>
               <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
-                Review submitted shift reports & manager signatures
+                Review verified shift reports & manager signatures
               </p>
             </div>
           </button>
@@ -430,9 +406,9 @@ export const OfficerDashboard: React.FC = () => {
                 1
               </span>
               <div>
-                <h5 className="text-xs font-bold text-white">Arrival Protocol</h5>
+                <h5 className="text-xs font-bold text-white">Fuel Forecourt Arrival</h5>
                 <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-                  Start duty on arrival. Confirm uniform, radio battery, flashlights, and post handover.
+                  Log online at 17:50 (5:50 PM) for the night shift. Add initial arrival status notes on fuel forecourt and storage tanks.
                 </p>
               </div>
             </div>
@@ -442,9 +418,9 @@ export const OfficerDashboard: React.FC = () => {
                 2
               </span>
               <div>
-                <h5 className="text-xs font-bold text-white">Regular Patrol Sweeps</h5>
+                <h5 className="text-xs font-bold text-white">Station Patrol Rounds</h5>
                 <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-                  Conduct checkpoint patrol rounds every 60-90 minutes. Attach photographic evidence where anomalies exist.
+                  Conduct regular sweeps around dispenser pumps, underground storage tanks, marts, and tanker discharge bays.
                 </p>
               </div>
             </div>
@@ -454,9 +430,9 @@ export const OfficerDashboard: React.FC = () => {
                 3
               </span>
               <div>
-                <h5 className="text-xs font-bold text-white">Immediate Occurrence Logging</h5>
+                <h5 className="text-xs font-bold text-white">Fuel Hazard & Occurrence Logging</h5>
                 <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-                  Critical safety hazards, trespassing, and damages must be logged immediately for automatic escalation.
+                  Immediately log fuel leaks, unauthorized entry, fire hazards, or suspicious persons for immediate Head Office alert.
                 </p>
               </div>
             </div>
@@ -466,9 +442,9 @@ export const OfficerDashboard: React.FC = () => {
                 4
               </span>
               <div>
-                <h5 className="text-xs font-bold text-white">End Shift Lock</h5>
+                <h5 className="text-xs font-bold text-white">Shift Conclusion</h5>
                 <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
-                  Compile shift summary upon relief. Shift reports are locked and sent directly to Station Manager.
+                  Conclude night duty at 06:00, generate the sealed shift report, and submit for Station Manager digital verification.
                 </p>
               </div>
             </div>
@@ -496,13 +472,6 @@ export const OfficerDashboard: React.FC = () => {
       <PatrolModal
         isOpen={isPatrolOpen}
         onClose={() => setIsPatrolOpen(false)}
-        activeDuty={activeDuty}
-        onSuccess={() => fetchData()}
-      />
-
-      <RoutineCheckModal
-        isOpen={isCheckOpen}
-        onClose={() => setIsCheckOpen(false)}
         activeDuty={activeDuty}
         onSuccess={() => fetchData()}
       />

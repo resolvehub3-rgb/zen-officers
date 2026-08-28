@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { api } from '../../services/api.ts';
 import { useAuth } from '../../context/AuthContext.tsx';
 import { 
-  AlertTriangle, 
-  UploadCloud, 
-  Mic, 
+  FileText, 
   MapPin, 
-  ShieldAlert, 
+  Mic, 
   Check, 
   X, 
   AlertCircle,
   Camera,
-  Film
+  Shield,
+  Fuel,
+  Sparkles
 } from 'lucide-react';
 import { OccurrenceSeverity, OccurrenceType } from '../../types/index.ts';
 import { VoiceRecorderModal } from './VoiceRecorderModal.tsx';
@@ -23,8 +23,8 @@ export const OccurrenceModal: React.FC<{
   onSuccess: (occurrence: any) => void;
 }> = ({ isOpen, onClose, activeDuty, onSuccess }) => {
   const { user } = useAuth();
-  const [type, setType] = useState<OccurrenceType>('SUSPICIOUS_ACTIVITY');
-  const [severity, setSeverity] = useState<OccurrenceSeverity>('MEDIUM');
+  const [type, setType] = useState<OccurrenceType>('OCCURRENCE');
+  const [severity, setSeverity] = useState<OccurrenceSeverity>('LOW');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [immediateAction, setImmediateAction] = useState('');
@@ -40,33 +40,43 @@ export const OccurrenceModal: React.FC<{
 
   if (!isOpen) return null;
 
-  const categories: { type: OccurrenceType; label: string; icon: string }[] = [
-    { type: 'INCIDENT', label: 'Security Incident', icon: '🚨' },
-    { type: 'OCCURRENCE', label: 'Routine Occurrence', icon: '📋' },
-    { type: 'DAMAGE', label: 'Property Damage', icon: '🔨' },
-    { type: 'SUSPICIOUS_ACTIVITY', label: 'Suspicious Activity', icon: '👁️' },
-    { type: 'SAFETY_ISSUE', label: 'Safety / Health Hazard', icon: '⚠️' },
-    { type: 'MAINTENANCE_CONCERN', label: 'Maintenance / Fault', icon: '🔧' },
-    { type: 'UNUSUAL_OBSERVATION', label: 'Unusual Observation', icon: '🔍' },
-    { type: 'TRESPASSING', label: 'Unauthorized Access / Trespass', icon: '🚫' },
-    { type: 'OTHER', label: 'Other Security Matter', icon: '📌' },
+  const categories: { type: OccurrenceType; label: string; icon: string; fuelHint: string }[] = [
+    { type: 'OCCURRENCE', label: 'Routine Night Log', icon: '📋', fuelHint: 'Overnight parked vehicles, delivery arrivals, general observations' },
+    { type: 'UNUSUAL_OBSERVATION', label: 'Unusual Observation', icon: '🔍', fuelHint: 'Unfamiliar vehicle near pump, strange sound, unusual activity' },
+    { type: 'SUSPICIOUS_ACTIVITY', label: 'Suspicious Activity', icon: '👁️', fuelHint: 'Loitering near storage tanks, boundary inspection, suspicious persons' },
+    { type: 'SAFETY_ISSUE', label: 'Fuel & Safety Hazard', icon: '⚠️', fuelHint: 'Fuel drip/spill, fire equipment blockage, smoking attempt' },
+    { type: 'MAINTENANCE_CONCERN', label: 'Maintenance / Fault', icon: '🔧', fuelHint: 'Canopy lamp out, dispenser nozzle leak, generator issue' },
+    { type: 'DAMAGE', label: 'Station Property Damage', icon: '🔨', fuelHint: 'Pump guard damage, curb scrape, broken lock or light' },
+    { type: 'TRESPASSING', label: 'Unauthorized Access', icon: '🚫', fuelHint: 'Entering closed mart, climbing perimeter fence, tank farm intrusion' },
+    { type: 'INCIDENT', label: 'Security Incident', icon: '🚨', fuelHint: 'Customer confrontation, attempted theft, active disturbance' },
+    { type: 'OTHER', label: 'Other Station Matter', icon: '📌', fuelHint: 'Any other fuel station night security note' },
   ];
 
   const severities: { level: OccurrenceSeverity; label: string; color: string; desc: string }[] = [
-    { level: 'LOW', label: 'Low', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', desc: 'Minor observation, no immediate threat' },
-    { level: 'MEDIUM', label: 'Medium', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', desc: 'Notable situation requiring attention' },
-    { level: 'HIGH', label: 'High', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', desc: 'Serious occurrence, escalation needed' },
-    { level: 'CRITICAL', label: 'Critical / Red Alert', color: 'bg-red-500/20 text-red-400 border-red-500/40 font-bold', desc: 'Urgent emergency, immediate Head Office notification' },
+    { level: 'LOW', label: 'Low / Standard', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', desc: 'Routine nightly observation, no immediate threat' },
+    { level: 'MEDIUM', label: 'Medium', color: 'bg-blue-500/20 text-blue-300 border-blue-500/40', desc: 'Station matter requiring supervisor awareness' },
+    { level: 'HIGH', label: 'High', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40', desc: 'Notable hazard or security issue requiring prompt action' },
+    { level: 'CRITICAL', label: 'Critical Alert', color: 'bg-red-500/20 text-red-300 border-red-500/50 font-bold', desc: 'Active emergency, immediate Head Office alarm' },
+  ];
+
+  const quickStationSectors = [
+    'Forecourt & Dispenser Pumps',
+    'Underground Tank Storage Area',
+    'Cashier Booth & Mini-Mart',
+    'Tanker Discharge Bay',
+    'Main Entry / Exit Driveway',
+    'Rear Perimeter Wall',
+    'Generator & Compressor Room',
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeDuty) {
-      setError('You must have an active duty session to file a security occurrence.');
+      setError('You must have an active duty session to record a station occurrence.');
       return;
     }
     if (!location.trim() || !description.trim()) {
-      setError('Please provide specific location and detailed description.');
+      setError('Please provide station location/sector and observation description.');
       return;
     }
 
@@ -134,12 +144,12 @@ export const OccurrenceModal: React.FC<{
           {/* Header */}
           <div className="p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
-                <AlertTriangle className="w-5 h-5" />
+              <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                <FileText className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-white">Record Security Occurrence / Incident</h3>
-                <p className="text-xs text-slate-400">Official log entry with time, photos & severity ranking</p>
+                <h3 className="font-bold text-base text-white">Record Fuel Station Occurrence / Night Log</h3>
+                <p className="text-xs text-slate-400">Log nightly station happenings, vehicle activities, safety notices, or events</p>
               </div>
             </div>
             <button
@@ -161,21 +171,28 @@ export const OccurrenceModal: React.FC<{
 
             {/* Occurrence Type Selector */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-2">Occurrence Category</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-2">
+                Occurrence Category
+              </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {categories.map((c) => (
                   <button
                     key={c.type}
                     type="button"
                     onClick={() => setType(c.type)}
-                    className={`p-2.5 rounded-xl border text-left text-xs font-medium transition-all flex items-center gap-2 ${
+                    className={`p-2.5 rounded-xl border text-left text-xs font-medium transition-all flex flex-col justify-between ${
                       type === c.type
-                        ? 'bg-blue-600/20 border-blue-500 text-white shadow-sm'
+                        ? 'bg-blue-600/20 border-blue-500 text-white shadow-sm ring-1 ring-blue-500/30'
                         : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                     }`}
                   >
-                    <span className="text-base">{c.icon}</span>
-                    <span className="truncate">{c.label}</span>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-base">{c.icon}</span>
+                      <span className="font-semibold truncate">{c.label}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 line-clamp-2 leading-tight">
+                      {c.fuelHint}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -183,7 +200,9 @@ export const OccurrenceModal: React.FC<{
 
             {/* Severity Level */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-2">Severity Classification</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-2">
+                Log Priority / Severity
+              </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {severities.map((s) => (
                   <button
@@ -197,35 +216,48 @@ export const OccurrenceModal: React.FC<{
                     }`}
                   >
                     <p className="text-xs font-bold">{s.label}</p>
-                    <p className="text-[10px] opacity-80 mt-0.5 line-clamp-1">{s.desc}</p>
+                    <p className="text-[10px] opacity-80 mt-0.5 line-clamp-2 leading-tight">{s.desc}</p>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Location & Time */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Exact Location / Sector <span className="text-red-400">*</span>
+            {/* Location & Quick Sector Tags */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-slate-300">
+                  Station Sector / Location <span className="text-red-400">*</span>
                 </label>
-                <div className="relative">
-                  <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    required
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g. West Perimeter Fence, Gate 3, Vault A"
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs"
-                  />
-                </div>
+                <span className="text-[10px] text-slate-500">Select tag or type</span>
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Reporting Duty Session</label>
-                <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 font-mono">
-                  {activeDuty?.stationName} • Active since {new Date(activeDuty?.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
+
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {quickStationSectors.map((sector) => (
+                  <button
+                    key={sector}
+                    type="button"
+                    onClick={() => setLocation(sector)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
+                      location === sector
+                        ? 'bg-blue-600/30 border-blue-500 text-white'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    {sector}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative">
+                <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g. Pump Island 3, Underground Tank Manhole 2, Forecourt Ingress..."
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs"
+                />
               </div>
             </div>
 
@@ -233,7 +265,7 @@ export const OccurrenceModal: React.FC<{
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold text-slate-300">
-                  Detailed Description <span className="text-red-400">*</span>
+                  Night Occurrence Description <span className="text-red-400">*</span>
                 </label>
                 <button
                   type="button"
@@ -249,15 +281,16 @@ export const OccurrenceModal: React.FC<{
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="State chronological facts: what was observed, vehicle plates, suspect descriptions, damage detected..."
+                placeholder="State chronological facts: e.g. Commercial taxi GT-442-21 parked near air pump at 02:15, driver resting. Inspected vehicle, driver departed at 02:45. Area quiet and secure."
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs placeholder:text-slate-600 resize-none font-normal"
               />
             </div>
 
             {voiceTranscription && (
               <div className="p-3 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs text-blue-300">
-                <p className="font-semibold text-[11px] text-blue-400 uppercase tracking-wider mb-0.5">
-                  🎙️ Spoken Voice Note Transcribed:
+                <p className="font-semibold text-[11px] text-blue-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  🎙️ Attached Voice Transcription:
                 </p>
                 <p className="italic">"{voiceTranscription}"</p>
               </div>
@@ -265,43 +298,49 @@ export const OccurrenceModal: React.FC<{
 
             {/* Immediate Action Taken */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Immediate Action Taken</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                Action Taken by Security Officer (Optional)
+              </label>
               <input
                 type="text"
                 value={immediateAction}
                 onChange={(e) => setImmediateAction(e.target.value)}
-                placeholder="e.g. Challenged trespasser, reinforced gate latch, contacted Station Supervisor..."
-                className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs"
+                placeholder="e.g. Conducted physical sweep, verified credentials, ensured fuel nozzle locked, recorded in station log..."
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-blue-500 focus:outline-none text-slate-100 text-xs"
               />
             </div>
 
-            {/* Persons Involved & Witnesses */}
+            {/* Persons / Vehicles Involved & Witnesses */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Persons Involved / Suspects</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Vehicles / Persons Involved
+                </label>
                 <input
                   type="text"
                   value={personsInvolved}
                   onChange={(e) => setPersonsInvolved(e.target.value)}
-                  placeholder="Names, IDs, or physical descriptions"
+                  placeholder="e.g. Vehicle Reg: GE-8921-20, Driver / Customer"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Witnesses</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Witnesses / Staff on Site
+                </label>
                 <input
                   type="text"
                   value={witnesses}
                   onChange={(e) => setWitnesses(e.target.value)}
-                  placeholder="Co-workers, visitors, bystanders"
+                  placeholder="e.g. Cashier Kwame, Night Attendant"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs"
                 />
               </div>
             </div>
 
-            {/* Photo / Video Attachments */}
+            {/* Photo Evidence */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Evidence Media Attachments</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Photo Evidence (Optional)</label>
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -309,7 +348,7 @@ export const OccurrenceModal: React.FC<{
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition-colors"
                 >
                   <Camera className="w-4 h-4 text-blue-400" />
-                  {photoUrl ? 'Change Photo Evidence' : 'Attach Photo Evidence'}
+                  {photoUrl ? 'Change Attached Photo' : 'Attach Photo Evidence'}
                 </button>
 
                 {photoUrl && (
@@ -346,8 +385,8 @@ export const OccurrenceModal: React.FC<{
                     : 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/30'
                 }`}
               >
-                <ShieldAlert className="w-4 h-4" />
-                {loading ? 'Submitting Occurrence...' : severity === 'CRITICAL' ? 'SUBMIT CRITICAL OCCURRENCE' : 'Log Occurrence'}
+                <FileText className="w-4 h-4" />
+                <span>{loading ? 'Saving Log...' : severity === 'CRITICAL' ? 'SUBMIT CRITICAL ALERT' : 'Save Night Occurrence Log'}</span>
               </button>
             </div>
           </form>
@@ -357,7 +396,7 @@ export const OccurrenceModal: React.FC<{
       <VoiceRecorderModal
         isOpen={isVoiceOpen}
         onClose={() => setIsVoiceOpen(false)}
-        title="Dictate Incident / Occurrence"
+        title="Dictate Night Station Occurrence"
         onTranscriptionComplete={(text, audioUrl) => {
           setDescription((prev) => (prev ? `${prev} ${text}` : text));
           setVoiceTranscription(text);

@@ -6,7 +6,6 @@ import {
   Clock, 
   User, 
   Footprints, 
-  ClipboardCheck, 
   ShieldAlert, 
   CheckCircle2, 
   AlertTriangle, 
@@ -187,32 +186,7 @@ export const ReportReviewModal: React.FC<{
                   )}
                 </div>
 
-                {/* 2. Routine Checks Breakdown */}
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                  <h5 className="font-bold text-white flex items-center gap-2">
-                    <ClipboardCheck className="w-4 h-4 text-teal-400" />
-                    Routine Station Inspections ({timeline?.routineChecks?.length || 0})
-                  </h5>
-
-                  {timeline?.routineChecks?.map((chk: any) => (
-                    <div key={chk.id} className="space-y-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {chk.checklist?.map((it: any) => (
-                          <div key={it.id} className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
-                            <span className="text-slate-300 truncate pr-2">{it.name}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                              it.status === 'OK' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
-                            }`}>
-                              {it.status}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 3. Occurrences Breakdown */}
+                {/* 2. Occurrences Breakdown */}
                 <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <h5 className="font-bold text-white flex items-center gap-2">
                     <ShieldAlert className="w-4 h-4 text-red-400" />
